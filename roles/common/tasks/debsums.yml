@@ -1,0 +1,6 @@
+---
+- name: Install debsums
+  become: true
+  apt:
+    name: debsums
+    update_cache: true
