@@ -1,0 +1,95 @@
+---
+- name: Install required apt packages for OSSEC
+  become: true
+  apt:
+    name: "{{ item }}"
+    # update_cache: true
+  with_items:
+    - build-essential
+    - gcc
+    - mailutils
+    - make
+    - apache2
+    - libapache2-mod-php7.0
+    - php7.0
+    - php7.0-cli
+    - php7.0-common
+    - apache2-utils
+    - unzip
+    - wget
+    - sendmail
+    - inotify-tools
+    - libapache2-mod-evasive
+- name: Disable expose_php from php.ini
+  become: true
+  lineinfile:
+    path: /etc/php/7.0/{{item}}/php.ini
+    regexp: '^expose_php\s=\sOn'
+    state: present
+    line: "expose_php = Off"
+  with_items:
+    - cli
+    - apache2
+- name: Disable url fopen in php
+  become: true
+  lineinfile:
+    path: /etc/php/7.0/{{item}}/php.ini
+    regexp: '^allow_url_fopen\s=\sOn'
+    state: present
+    line: "allow_url_fopen = On"
+  with_items:
+    - cli
+    - apache2
+  lineinfile:
+- name: Configure mod evasive
+  become: true
+  file:
+    src: evasive.conf
+    dest: /etc/apache2/mods-available/evasive.conf
+- name: Enable mod evasive
+  become: true
+  file:
+    src: /etc/apache2/mods-available/evasive.conf
+    dest: /etc/apache2/mods-enabled/evasive.conf
+  state: link
+- name: Make mod evasive logging directory
+  become: true
+  file:
+    path: /var/log/mod_evasive
+    owner: www-data
+    group: www-data
+
+- name: Restart apache2
+  systemd:
+    state: restarted
+    name: apache2
+- name: Download OSSEC
+  become: true
+  get_url:
+    url: "https://github.com/ossec/ossec-hids/archive/{{ossec_version}}.tar.gz"
+    dest: /opt/ossec.tar.gz
+- name: Extract OSSEC
+  become: true
+  unarchive:
+    src: "/opt/ossec.tar.gz"
+    dest: /opt/
+- name: Copy OSSEC  config File
+  become: true
+  copy:
+    src: preloaded-vars.conf
+    dest: "/opt/ossec-hids-{{ossec_version}}/etc/"
+- name: run install script
+  become: true
+  command: ./install.sh
+  args:
+    chdir: /opt/ossec-hids-{{ossec_version}}
+- name: modify etc hosts if needed
+  become: true
+  template:
+    src: hosts
+    dest: /etc/hosts
+- name: start ossec
+  become: true
+  command: ./ossec-control start
+  args:
+    chdir: /var/ossec/2.9.3/bin/
