@@ -1,21 +1,7 @@
 ---
-- name: Clone sensible bash
-  git:
-    repo: 'https://github.com/mrzool/bash-sensible'
-    dest: ~/git/personal/sensible-bash
-- name: Add sensible-bash to bashrc
-  lineinfile:
-    path: ~/.bashrc
-    regexp: 'source\s+~\/git\/personal\/sensible-bash\/sensible.bash'
-    line: 'source ~/git/personal/sensible-bash/sensible.bash'
-    insertafter: 'EOF'
-- name: Clone liquid prompt
-  git:
-    repo: 'https://github.com/nojhan/liquidprompt.git'
-    dest: ~/git/personal/liquidprompt
-- name: Add liquid prompt to bashrc
-  lineinfile:
-    path: ~/.bashrc
-    regexp: 'source\s+~\/git\/personal\/liquidprompt\/liquidprompt'
-    line: 'source ~/git/personal/liquidprompt/liquidprompt'
-    insertafter: 'EOF'
+- hosts: all
+  tasks:
+  - import_role:
+      name: common
+    vars:
+      ossec_version: 2.9.3
