@@ -1,0 +1,17 @@
+---
+- name: Install sysstat
+  become: true
+  apt:
+    name: sysstat
+    update_cache: true
+- name: Alter the config File
+  become: true
+  lineinfile:
+    path: /etc/default/sysstat
+    regexp: '^ENABLED="false"'
+    line: 'ENABLED="true"'
+- name: Restart service
+  become: true
+  service:
+    name: sysstat
+    state: restarted
