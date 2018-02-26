@@ -1,0 +1,100 @@
+---
+- name: Install apt dependencies for usb hardening
+  become: true
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - libqb0
+    - libqb-dev
+    - libsystemd-dev
+    - build-essential
+    - autogen
+    - autoconf
+    - libtool
+    - seccomp
+    - libseccomp-dev
+    - libseccomp2
+    - libaudit-common
+    - libaudit-dev
+    - libaudit1
+    - libprotobuf-dev
+    - protobuf-compiler
+    - libdbus-glib-1-dev
+    - libxml2-utils
+    - xsltproc
+    - libpolkit-gobject-1-dev
+    - asciidoctor
+    - libqt4-dev
+- name: Download libsodium
+  git:
+    repo: "https://github.com/jedisct1/libsodium"
+    version: "stable"
+    dest: /tmp/libsodium
+- name: Build libsodium
+  shell: "./configure"
+  args:
+    chdir: /tmp/libsodium
+- name: Run make on libsodium
+  make:
+    chdir: /tmp/libsodium
+- name: Run make check on libsodium
+  make:
+    chdir: /tmp/libsodium
+    target: check
+- name: Run make install on libsodium
+  become: true
+  make:
+    chdir: /tmp/libsodium
+    target: install
+- name: Clone usbguard
+  git:
+    repo: "https://github.com/USBGuard/usbguard.git"
+    dest: "/tmp/usbguard"
+- name: Initiate submodule
+  shell: "git submodule init"
+  args:
+    chdir: "/tmp/usbguard"
+- name: Update submodule
+  shell: "git submodule update"
+  args:
+    chdir: "/tmp/usbguard"
+- name: Generate conigure script
+  shell: "./autogen.sh"
+  args:
+    chdir: "/tmp/usbguard"
+- name: Configure USBGuard
+  shell: "./configure --with-crypto-library=sodium --prefix=/usr --sysconfdir=/etc --with-bundled-catch --with-bundled-pegtl --with-gui-qt=qt4 --enable-systemd"
+  args:
+    chdir: /tmp/usbguard
+- name: make USBGuard
+  make:
+    chdir: /tmp/usbguard
+- name: install usbguard
+  become: true
+  make:
+    chdir: /tmp/usbguard
+    target: install
+- name: Create misc ldconfig file
+  become: true
+  file:
+    path: /etc/ld.so.conf.d/99local.conf
+    state: touch
+- name: Add /usr/local/lib to ldconfig
+  become: true
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '\/usr\/local\/lib'
+    line: '/usr/local/lib'
+    insertafter: 'EOF'
+- name: update ld configuration
+  become: true
+  command: ldconfig
+- name: Generate usbguard policy
+  become: true
+  shell: "usbguard generate-policy > rules.conf"
+- name: Install the config
+  become: true
+  shell: "install -m 0600 -o root -g root rules.conf /etc/usbguard/rules.conf"
+- name: Restart usbguard
+  become: true
+  systemd: state=started name=usbguard.service

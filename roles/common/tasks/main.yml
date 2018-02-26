@@ -9,3 +9,5 @@
   include_tasks: sysstat.yml
 - name: Install and Configure OSSEC 
   include_tasks: OSSEC.yml
+- name: Install and Configure usbguard 
+  include_tasks: usb.yml
