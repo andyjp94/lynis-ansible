@@ -1,4 +1,6 @@
 ---
 - name: install terminal environment configurations
   include_tasks: terminal.yml
+- name: install docker if ubuntu 16.04
+  include_tasks: docker.yml
 
