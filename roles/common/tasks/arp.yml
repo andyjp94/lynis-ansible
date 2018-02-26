@@ -1,0 +1,6 @@
+---
+- name: install arpwatch.yml
+  become: true
+  apt:
+    name: arpwatch
+    update_cache: true
