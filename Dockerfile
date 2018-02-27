@@ -1,12 +1,16 @@
 FROM ubuntu:16.04
 
-ADD . .
-RUN apt update
-RUN apt install -y git build-essential
-RUN git clone https://github.com/ansible/ansible.git --recursive
-RUN cd ansible; make deb
-RUN echo "localhost ansible_connection=local" >> /etc/ansible/hosts
+ADD . /opt/ansible/
 
-RUN ansible-playbook main.yml
+RUN apt update && \
+    apt install -y \
+      software-properties-common && \
+    apt-add-repository ppa:ansible/ansible && \
+    apt-get update && \
+    apt-get install -y \
+      ansible && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "localhost ansible_connection=local" >> /etc/ansible/hosts && \
+    ansible-playbook /opt/ansible/main.yml
 
 CMD ["/bin/bash"]
