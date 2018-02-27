@@ -13,6 +13,7 @@
   become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
+    validate_certs: no
     state: present
 - name: add apt repository
   become: true
