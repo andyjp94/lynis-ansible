@@ -1,3 +1,8 @@
+- name: Ensure git is installed
+  become: true
+  apt:
+    name: git
+    update_cache: true
 - name: Clone sensible bash
   git:
     repo: 'https://github.com/mrzool/bash-sensible'
