@@ -40,7 +40,6 @@
   with_items:
     - cli
     - apache2
-  lineinfile:
 - name: Configure mod evasive
   become: true
   file:
