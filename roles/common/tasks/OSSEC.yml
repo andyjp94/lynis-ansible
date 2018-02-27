@@ -54,6 +54,7 @@
 - name: Make mod evasive logging directory
   become: true
   file:
+    state: directory
     path: /var/log/mod_evasive
     owner: www-data
     group: www-data
