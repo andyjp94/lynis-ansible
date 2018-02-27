@@ -1,7 +1,4 @@
 sudo: required
 
-language: python
-
 script:
-- echo $PATH 
 - docker build - < Dockerfile
