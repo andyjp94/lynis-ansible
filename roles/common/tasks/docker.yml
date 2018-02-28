@@ -9,12 +9,12 @@
     - "ca-certificates"
     - "curl"
     - "software-properties-common"
-- name: add GPG key
-  become: true
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    validate_certs: no
-    state: present
+# - name: add GPG key
+#   become: true
+#   apt_key:
+#     url: https://download.docker.com/linux/ubuntu/gpg
+#     validate_certs: no
+#     state: present
 - name: Download gpg key
   get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
