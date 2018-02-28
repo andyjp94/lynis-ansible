@@ -15,14 +15,8 @@
 #     url: https://download.docker.com/linux/ubuntu/gpg
 #     validate_certs: no
 #     state: present
-- name: Download gpg key
-  get_url:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    dest: /tmp/gpg
-- name: Add gpg key
-  become: true
-  apt_key:
-    file: /tmp/gpg
+- name: Install gpg key
+  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg |  apt-key add -
 - name: add apt repository
   become: true
   apt_repository:
