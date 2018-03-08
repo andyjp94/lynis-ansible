@@ -5,9 +5,11 @@
   include_tasks: debsums.yml
 - name: Install and Configure sysstat
   include_tasks: sysstat.yml
-- name: Install and Configure OSSEC 
+- name: Install and Configure OSSEC
   include_tasks: OSSEC.yml
-- name: Install and Configure usbguard 
+- name: Install and Configure usbguard
   include_tasks: usb.yml
-- name: Install ARP 
+- name: Install ARP
   include_tasks: arp.yml
+- name: Install Go
+  include_tasks: go.yml
