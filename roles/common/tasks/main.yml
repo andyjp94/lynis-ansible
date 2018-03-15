@@ -13,3 +13,5 @@
   include_tasks: arp.yml
 - name: Install Go
   include_tasks: go.yml
+- name: Install terraform
+  include_tasks: terraform.yml
