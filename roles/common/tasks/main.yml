@@ -15,3 +15,5 @@
   include_tasks: go.yml
 - name: Install terraform
   include_tasks: terraform.yml
+- name: Install webtools
+  include_tasks: web.yml
