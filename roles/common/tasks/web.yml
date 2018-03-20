@@ -17,3 +17,9 @@
   apt:
     name: yarn
     update_cache: yes
+- name: Add yarn global to path
+  lineinfile:
+    path: ~/.bashrc
+    regexp: 'export\s+PATH="\$PATH:\$\(yarn\s+global\s+bin\s*\)"'
+    line: 'export PATH="$PATH:$(yarn global bin)"'
+    state: present
